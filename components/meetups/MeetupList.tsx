@@ -1,11 +1,11 @@
-import MeetupItem, {MeetupProps} from "@/components/meetups/MeetupItem";
+import MeetupItem from "@/components/meetups/MeetupItem";
 
 import classes from "./MeetupList.module.css";
 
-const MeetupList = (props: MeetupProps) => {
+const MeetupList = (props: any) => {
   return (
       <ul className={classes.list}>
-        {props.meetups.map((meetup) => (
+        {props.meetups.map((meetup: any) => (
             <MeetupItem
                 key={meetup.id}
                 id={meetup.id}
