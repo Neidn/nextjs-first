@@ -3,14 +3,18 @@ import {MongoClient, ObjectId} from "mongodb";
 import MeetupDetail, {MeetupDetailProps} from "@/components/meetups/MeetupDetailProps";
 import {GetStaticPaths, GetStaticProps} from "next";
 
-const MeetupDetails = ({image, title, address, description}: MeetupDetailProps) => {
+type MeetupDataProps = {
+  meetupData: MeetupDetailProps;
+}
+
+const MeetupDetails = ({meetupData}: MeetupDataProps) => {
   return (
       <>
         <MeetupDetail
-            image={image}
-            title={title}
-            address={address}
-            description={description}
+            image={meetupData.image}
+            title={meetupData.title}
+            address={meetupData.address}
+            description={meetupData.description}
         />
       </>
   );
@@ -36,7 +40,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   await client.close();
 
   return {
-    fallback: false,
+    fallback: 'blocking',
     paths: meetups.map(meetup => ({
       params: {
         meetupId: meetup._id.toString(),
@@ -61,7 +65,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
   // fetch data from an API
   const meetupId = new ObjectId(context.params.meetupId);
 
-
   const client: MongoClient = await MongoClient.connect(MONGODB_URI);
   const db = client.db();
 
@@ -70,9 +73,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   const selectedMeetup = await meetupsCollection.findOne({
     _id: meetupId,
-  });
+  }, {projection: {_id: 0}});
 
-  console.log(selectedMeetup);
   await client.close();
 
   return {
