@@ -2,9 +2,18 @@ import React, {useRef} from "react";
 
 import Card from "@/components/ui/Card";
 import classes from "./NewMeetupForm.module.css";
-import {MeetupProps} from "@/components/meetups/MeetupItem";
 
-const NewMeetupForm = (props: MeetupProps) => {
+export type NewMeetupProps = {
+  onAddMeetup: (meetupData: {
+    image: string;
+    address: string;
+    description: string;
+    title: string;
+  }) => void;
+}
+
+
+const NewMeetupForm = (props: NewMeetupProps) => {
   const titleInputRef = useRef<any>();
   const imageInputRef = useRef<any>();
   const addressInputRef = useRef<any>();

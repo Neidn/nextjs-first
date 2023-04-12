@@ -1,12 +1,6 @@
 import MeetupList from "@/components/meetups/MeetupList";
 
-const DUMMY_MEETUPS: ({
-  image: string;
-  address: string;
-  description: string;
-  id: string;
-  title: string
-})[] = [
+const DUMMY_MEETUPS: (MeetupData)[] = [
   {
     id: "m1",
     title: "This is a first meetup",
@@ -25,10 +19,32 @@ const DUMMY_MEETUPS: ({
   },
 ];
 
-const HomePage = () => {
+export type MeetupListProps = {
+  meetups: MeetupData[];
+}
+
+export type MeetupData = {
+  id: string;
+  title: string;
+  image: string;
+  address: string;
+  description: string;
+}
+
+const HomePage = (props: MeetupListProps) => {
   return (
-      <MeetupList meetups={DUMMY_MEETUPS}/>
+      <MeetupList meetups={props.meetups}/>
   );
 }
 
 export default HomePage
+
+export const getStaticProps = async () => {
+  // fetch data from an API
+  return {
+    props: {
+      meetups: DUMMY_MEETUPS,
+    },
+    revalidate: 1,
+  };
+}
