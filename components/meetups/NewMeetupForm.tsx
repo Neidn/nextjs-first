@@ -2,14 +2,10 @@ import React, {useRef} from "react";
 
 import Card from "@/components/ui/Card";
 import classes from "./NewMeetupForm.module.css";
+import {MeetupDetailProps} from "@/components/meetups/MeetupDetailProps";
 
 export type NewMeetupProps = {
-  onAddMeetup: (meetupData: {
-    image: string;
-    address: string;
-    description: string;
-    title: string;
-  }) => void;
+  onAddMeetup: (meetupData: MeetupDetailProps) => void;
 }
 
 

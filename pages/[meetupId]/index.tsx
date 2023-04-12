@@ -1,14 +1,16 @@
-import MeetupDetail from "@/components/meetups/MeetupDetail";
-import {GetStaticProps} from "next";
+import {MongoClient, ObjectId} from "mongodb";
 
-const MeetupDetails = () => {
+import MeetupDetail, {MeetupDetailProps} from "@/components/meetups/MeetupDetailProps";
+import {GetStaticPaths, GetStaticProps} from "next";
+
+const MeetupDetails = ({image, title, address, description}: MeetupDetailProps) => {
   return (
       <>
         <MeetupDetail
-            image={"https://cdn.pixabay.com/photo/2023/04/06/19/11/flower-7904985_1280.jpg"}
-            title={"Korea"}
-            address={"Seoul"}
-            description={"Korea is a country in East Asia, occupying the southern half of the Korean Peninsula and the northern half of the Korean Strait."}
+            image={image}
+            title={title}
+            address={address}
+            description={description}
         />
       </>
   );
@@ -16,14 +18,30 @@ const MeetupDetails = () => {
 
 export default MeetupDetails;
 
+const MONGODB_URI: string = `${process.env.DB_HOST}meetups?retryWrites=true&w=majority`;
+
 // pre generated paths
-export const getStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const client: MongoClient = await MongoClient.connect(MONGODB_URI);
+  const db = client.db();
+
+  const meetupsCollection = db.collection('meetups');
+
+  const meetups = await meetupsCollection.find({}, {
+    projection: {
+      _id: 1,
+    }
+  }).toArray();
+
+  await client.close();
+
   return {
     fallback: false,
-    paths: [
-      {params: {meetupId: "m1"}},
-      {params: {meetupId: "m2"}},
-    ]
+    paths: meetups.map(meetup => ({
+      params: {
+        meetupId: meetup._id.toString(),
+      }
+    }))
   }
 }
 
@@ -34,18 +52,32 @@ export const getStaticProps: GetStaticProps = async (context) => {
     }
   }
 
+  if (!context.params.meetupId || Array.isArray(context.params.meetupId)) {
+    return {
+      notFound: true,
+    }
+  }
+
   // fetch data from an API
-  const meetupId = context.params.meetupId;
+  const meetupId = new ObjectId(context.params.meetupId);
+
+
+  const client: MongoClient = await MongoClient.connect(MONGODB_URI);
+  const db = client.db();
+
+  const meetupsCollection = db.collection('meetups');
+
+
+  const selectedMeetup = await meetupsCollection.findOne({
+    _id: meetupId,
+  });
+
+  console.log(selectedMeetup);
+  await client.close();
 
   return {
     props: {
-      meetupData: {
-        id: meetupId,
-        image: "https://cdn.pixabay.com/photo/2023/04/06/19/11/flower-7904985_1280.jpg",
-        title: "Korea",
-        address: "Seoul",
-        description: "Korea is a country in East Asia, occupying the southern half of the Korean Peninsula and the northern half of the Korean Strait."
-      },
+      meetupData: selectedMeetup,
     }
   }
 }

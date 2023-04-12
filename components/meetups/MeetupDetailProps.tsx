@@ -2,14 +2,14 @@ import Image from "next/image";
 
 import classes from "./MeetupDetail.module.css";
 
-export type MeetupDetail = {
+export type MeetupDetailProps = {
   image: string;
   address: string;
   description: string;
   title: string;
 }
 
-const MeetupDetail = (props: MeetupDetail) => {
+const MeetupDetail = (props: MeetupDetailProps) => {
   return (
       <section className={classes.detail}>
         <Image
