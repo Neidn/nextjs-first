@@ -41,10 +41,18 @@ export interface MeetupProps {
   }) => void;
 }
 
+export interface MeetupData {
+  image: string;
+  address: string;
+  description: string;
+  title: string;
+}
+
 export interface MeetupItem {
   key: string;
   id: string;
   image: string;
   title: string;
   address: string;
+  description: string;
 }
