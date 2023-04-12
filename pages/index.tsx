@@ -39,12 +39,28 @@ const HomePage = (props: MeetupListProps) => {
 
 export default HomePage
 
+/*
+// SSR
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const req = context.req;
+  const res = context.res;
+
+  return {
+    props: {
+      meetups: DUMMY_MEETUPS,
+    }
+  };
+}
+*/
+
+// this static data may not have recent data
 export const getStaticProps = async () => {
   // fetch data from an API
   return {
     props: {
       meetups: DUMMY_MEETUPS,
     },
-    revalidate: 1,
+    // data check and refresh interval
+    revalidate: 10,
   };
 }
